@@ -17,7 +17,7 @@ public class UserRepository {
     private static final String UserName = "User_name";
     private static final String Email = "Email";
     private static final String Password_r = "Password_r";
-    private  String Authority = "User";
+    private String Authority = "User";
 
     public int saveUser(UserRegistrationRequest request) {
         Sql_connect sql_connect = new Sql_connect();
@@ -37,8 +37,6 @@ public class UserRepository {
             statement.setString(6, request.getAuthority());
 
 
-
-
             return statement.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -47,6 +45,7 @@ public class UserRepository {
 
         return 0;
     }
+
     public boolean isUserExitsWithEmail(String Email) {
         Sql_connect sql_connect = new Sql_connect();
         Connection connection = sql_connect.connection();
@@ -66,27 +65,27 @@ public class UserRepository {
         }
         return exitStatement;
     }
+
     public UserResponse findUserByEmail(String email) {
         Sql_connect sql_connect = new Sql_connect();
         Connection connection = sql_connect.connection();
         PreparedStatement statement = null;
-        boolean exitStatement = false;
 
+        UserResponse response = new UserResponse();
         try {
             statement = connection.prepareStatement(
-                    "SELECT * from userinfo  where  Email=?");
+                    "SELECT* from userinfo where Email=?");
             statement.setString(1, email);
 
-            ResultSet resultSet = statement.executeQuery();
 
-            if(resultSet.next()){
-                UserResponse userResponse=new UserResponse();
-                userResponse.setFirstName(resultSet.getString(FirstName));
-                userResponse.setLastName(resultSet.getString(LastName));
-                userResponse.setUserName(resultSet.getString(UserName));
-                userResponse.setEmail(resultSet.getString(Email));
-                userResponse.setAuthority(resultSet.getString(Authority));
-                return userResponse;
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+
+                response.setFirstName(resultSet.getString(FirstName));
+                response.setLastName(resultSet.getString(LastName));
+                response.setUserName(resultSet.getString(UserName));
+                response.setEmail(resultSet.getString(Email));
+                response.setAuthority(resultSet.getString(Authority));
 
             }
 
@@ -94,8 +93,10 @@ public class UserRepository {
         } catch (Exception e) {
             System.out.println(e);
         }
-        return null;
+        return response;
     }
+
+
 
 
     public List<UserRegistrationRequest> getAllUser() {
@@ -149,5 +150,3 @@ public class UserRepository {
     }
 
 }
-
-
